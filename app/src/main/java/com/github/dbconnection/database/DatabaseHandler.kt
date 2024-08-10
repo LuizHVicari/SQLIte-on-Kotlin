@@ -24,9 +24,9 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         private const val DATABASE_NAME = "dbfile.sqlite"
         private const val DATABASE_VERSION = 1
         private const val TABLE_NAME = "registration"
-        private const val COD = 0
-        private const val NAME = 1
-        private const val PHONE = 2
+        const val COD = 0
+        const val NAME = 1
+        const val PHONE = 2
 
     }
 
@@ -70,6 +70,12 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context, DATABASE_NAME
         val output = this.appendRegistrationToString(cursor)
         cursor.close()
         return output
+    }
+
+    fun cursorList(): Cursor {
+        val db = this.writableDatabase
+        val cursor = db.query(TABLE_NAME, null, null, null, null, null, null)
+        return cursor
     }
 
     private fun appendRegistrationToString( cursor: Cursor): String {

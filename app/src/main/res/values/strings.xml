@@ -11,4 +11,10 @@
     <string name="informName">Informe o nome</string>
     <string name="informPhone">Informe o telefone</string>
     <string name="informCod">Informe o código</string>
+    <string name="edit_item">edit item</string>
+    <string name="person">person</string>
+    <string name="save">Salvar</string>
+    <string name="add">add</string>
+    <string name="search_tv">Pesquisar</string>
+    <string name="enter_the_code">Digite o código...</string>
 </resources>

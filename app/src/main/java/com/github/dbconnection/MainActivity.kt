@@ -1,5 +1,6 @@
 package com.github.dbconnection
 
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Toast
@@ -16,10 +17,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
-
         setButtonListeners()
+
+        if (intent.getIntExtra("cod", -1) != -1) {
+            binding.etCode.setText(intent.getIntExtra("cod", 0).toString())
+            binding.etCode.isEnabled = false
+            binding.etName.setText(intent.getStringExtra("name"))
+            binding.etPhone.setText(intent.getStringExtra("phone"))
+        }
 
         db = SQLiteDatabase.openOrCreateDatabase(
            this.getDatabasePath("dbConnection.sqlite"),
@@ -29,31 +35,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setButtonListeners() {
-        binding.btInclude.setOnClickListener {
-            btIncludeOnCLick()
-        }
-
-        binding.btChange.setOnClickListener {
-            btChangeOnCLick()
+        binding.btSave.setOnClickListener {
+            btSaveOnClick()
+            finish()
         }
 
         binding.btDelete.setOnClickListener {
             btDeleteOnCLick()
-        }
-
-        binding.btSearch.setOnClickListener {
-            btSearchOnCLick()
+            finish()
         }
 
         binding.btList.setOnClickListener {
-            btListOnCLick()
+            finish()
         }
     }
 
-    private fun btListOnCLick() {
-        val registrations = dbInterface.listRegistrations()
-        this.displayRegistrationsOnToast(registrations)
-    }
+//    private fun btListOnCLick() {
+//        finish()
+//    }
 
     private fun btSearchOnCLick() {
         val cod = binding.etCode.text.toString()
@@ -72,34 +71,29 @@ class MainActivity : AppCompatActivity() {
         val cod = binding.etCode.text.toString()
         val success = dbInterface.deleteRegistration(cod)
         displaySuccessToast(success, "deletado")
+//        finish()
     }
 
-    private fun btChangeOnCLick() {
-        if  (!validateCodField()) {
-            return
-        }
+    private fun btSaveOnClick() {
         if (!validateInputFields()) {
             return
         }
-        val cod = binding.etCode.text.toString()
-        val name = binding.etName.text.toString()
-        val phone = binding.etPhone.text.toString()
-        val success = this.dbInterface.updateRegistration(Registration(cod.toInt(), name, phone))
-        displaySuccessToast(success, "atualizado")
-    }
-
-    private fun btIncludeOnCLick() {
-        if (!validateInputFields()) {
-            return
+        if (binding.etCode.text?.isEmpty() == true) {
+            val success = dbInterface.insertRegistration(
+                Registration(
+                    0,
+                    binding.etName.text.toString(),
+                    binding.etPhone.text.toString()
+                )
+            )
+            displaySuccessToast(success, "Inserido")
         }
-        val name = binding.etName.text.toString()
-        val phone = binding.etPhone.text.toString()
-
-        val inserted = dbInterface.insertRegistration(Registration(null, name, phone))
-        if (inserted) {
-            Toast.makeText(this,"Incluído com sucesso", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Ocorreu um erro", Toast.LENGTH_LONG).show()
+        else {
+            val cod = binding.etCode.text.toString()
+            val name = binding.etName.text.toString()
+            val phone = binding.etPhone.text.toString()
+            val success = this.dbInterface.updateRegistration(Registration(cod.toInt(), name, phone))
+            displaySuccessToast(success, "atualizado")
         }
     }
 
